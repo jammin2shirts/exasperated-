@@ -17,6 +17,10 @@ interface StateTaxInfo {
   notes?: string;
 }
 
+// Upper sentinel for the top bracket (no real income reaches $1 billion).
+// Using an explicit constant avoids the `1/0` minification pattern.
+const TOP = 1_000_000_000;
+
 // ─── Federal 2026 Brackets ────────────────────────────────────────────────────
 // Projected from IRS Rev. Proc. 2024-40 (2025 rates) with ~2.8% inflation
 // adjustment. Assumes TCJA rates continue; will be revised if Congress acts.
@@ -29,7 +33,7 @@ const FEDERAL_BRACKETS: Record<FilingStatus, Bracket[]> = {
     [106_250, 202_850, 0.24],
     [202_850, 257_540, 0.32],
     [257_540, 643_890, 0.35],
-    [643_890, Infinity, 0.37],
+    [643_890, TOP, 0.37],
   ],
   mfj: [
     [0,       24_520,  0.10],
@@ -38,7 +42,7 @@ const FEDERAL_BRACKETS: Record<FilingStatus, Bracket[]> = {
     [212_490, 405_650, 0.24],
     [405_650, 515_080, 0.32],
     [515_080, 772_640, 0.35],
-    [772_640, Infinity, 0.37],
+    [772_640, TOP, 0.37],
   ],
   mfs: [
     [0,       12_260,  0.10],
@@ -47,7 +51,7 @@ const FEDERAL_BRACKETS: Record<FilingStatus, Bracket[]> = {
     [106_250, 202_850, 0.24],
     [202_850, 257_540, 0.32],
     [257_540, 386_320, 0.35],
-    [386_320, Infinity, 0.37],
+    [386_320, TOP, 0.37],
   ],
   hoh: [
     [0,       17_480,  0.10],
@@ -56,7 +60,7 @@ const FEDERAL_BRACKETS: Record<FilingStatus, Bracket[]> = {
     [106_250, 202_850, 0.24],
     [202_850, 257_510, 0.32],
     [257_510, 643_890, 0.35],
-    [643_890, Infinity, 0.37],
+    [643_890, TOP, 0.37],
   ],
 };
 
@@ -80,7 +84,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,     500,      0.020],
       [500,   3_000,    0.040],
-      [3_000, Infinity, 0.050],
+      [3_000, TOP, 0.050],
     ],
   },
   AK: {
@@ -92,7 +96,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
   AZ: {
     name: 'Arizona',
     standardDeduction: 14_600,
-    brackets: [[0, Infinity, 0.025]],
+    brackets: [[0, TOP, 0.025]],
     notes: 'Flat 2.5%',
   },
   AR: {
@@ -101,7 +105,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,     4_900,    0.020],
       [4_900, 9_300,    0.030],
-      [9_300, Infinity, 0.039],
+      [9_300, TOP, 0.039],
     ],
     notes: 'Top rate 3.9% (2026 after recent cuts)',
   },
@@ -118,13 +122,13 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [360_659, 432_787, 0.103],
       [432_787, 721_314, 0.113],
       [721_314, 1_000_000, 0.123],
-      [1_000_000, Infinity, 0.133],
+      [1_000_000, TOP, 0.133],
     ],
   },
   CO: {
     name: 'Colorado',
     standardDeduction: 14_600,
-    brackets: [[0, Infinity, 0.044]],
+    brackets: [[0, TOP, 0.044]],
     notes: 'Flat 4.4%',
   },
   CT: {
@@ -137,7 +141,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [100_000, 200_000, 0.060],
       [200_000, 250_000, 0.065],
       [250_000, 500_000, 0.069],
-      [500_000, Infinity, 0.0699],
+      [500_000, TOP, 0.0699],
     ],
   },
   DC: {
@@ -150,7 +154,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [60_000,  250_000, 0.085],
       [250_000, 500_000, 0.0925],
       [500_000, 1_000_000, 0.0975],
-      [1_000_000, Infinity, 0.1075],
+      [1_000_000, TOP, 0.1075],
     ],
   },
   DE: {
@@ -163,7 +167,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [10_000, 20_000, 0.048],
       [20_000, 25_000, 0.052],
       [25_000, 60_000, 0.0555],
-      [60_000, Infinity, 0.066],
+      [60_000, TOP, 0.066],
     ],
   },
   FL: {
@@ -175,7 +179,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
   GA: {
     name: 'Georgia',
     standardDeduction: 12_000,
-    brackets: [[0, Infinity, 0.0529]],
+    brackets: [[0, TOP, 0.0529]],
     notes: 'Flat 5.29% (2026)',
   },
   HI: {
@@ -193,31 +197,31 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [48_000,  150_000, 0.0825],
       [150_000, 175_000, 0.090],
       [175_000, 200_000, 0.100],
-      [200_000, Infinity, 0.110],
+      [200_000, TOP, 0.110],
     ],
   },
   ID: {
     name: 'Idaho',
     standardDeduction: 14_600,
-    brackets: [[0, Infinity, 0.058]],
+    brackets: [[0, TOP, 0.058]],
     notes: 'Flat 5.8%',
   },
   IL: {
     name: 'Illinois',
     standardDeduction: 2_425,
-    brackets: [[0, Infinity, 0.0495]],
+    brackets: [[0, TOP, 0.0495]],
     notes: 'Flat 4.95% (personal exemption used as deduction proxy)',
   },
   IN: {
     name: 'Indiana',
     standardDeduction: 0,
-    brackets: [[0, Infinity, 0.0305]],
+    brackets: [[0, TOP, 0.0305]],
     notes: 'Flat 3.05%; county taxes not included',
   },
   IA: {
     name: 'Iowa',
     standardDeduction: 14_600,
-    brackets: [[0, Infinity, 0.035]],
+    brackets: [[0, TOP, 0.035]],
     notes: 'Flat 3.5% (2026, phased in)',
   },
   KS: {
@@ -226,19 +230,19 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,      15_000,  0.031],
       [15_000, 30_000,  0.0525],
-      [30_000, Infinity, 0.057],
+      [30_000, TOP, 0.057],
     ],
   },
   KY: {
     name: 'Kentucky',
     standardDeduction: 3_160,
-    brackets: [[0, Infinity, 0.040]],
+    brackets: [[0, TOP, 0.040]],
     notes: 'Flat 4.0%',
   },
   LA: {
     name: 'Louisiana',
     standardDeduction: 4_500,
-    brackets: [[0, Infinity, 0.030]],
+    brackets: [[0, TOP, 0.030]],
     notes: 'Flat 3% (enacted late 2024, effective 2025/2026)',
   },
   ME: {
@@ -247,7 +251,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,      26_050,  0.058],
       [26_050, 61_600,  0.0675],
-      [61_600, Infinity, 0.0715],
+      [61_600, TOP, 0.0715],
     ],
   },
   MD: {
@@ -261,20 +265,20 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [100_000, 125_000, 0.050],
       [125_000, 150_000, 0.0525],
       [150_000, 250_000, 0.055],
-      [250_000, Infinity, 0.0575],
+      [250_000, TOP, 0.0575],
     ],
     notes: 'State rate only; local/county tax (up to 3.2%) not included',
   },
   MA: {
     name: 'Massachusetts',
     standardDeduction: 0,
-    brackets: [[0, Infinity, 0.050]],
+    brackets: [[0, TOP, 0.050]],
     notes: 'Flat 5%; 4% surtax on income > $1 M not included',
   },
   MI: {
     name: 'Michigan',
     standardDeduction: 5_600,
-    brackets: [[0, Infinity, 0.0425]],
+    brackets: [[0, TOP, 0.0425]],
     notes: 'Flat 4.25% (personal exemption used)',
   },
   MN: {
@@ -284,7 +288,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,       30_070,  0.0535],
       [30_070,  98_760,  0.068],
       [98_760,  183_340, 0.0785],
-      [183_340, Infinity, 0.0985],
+      [183_340, TOP, 0.0985],
     ],
   },
   MS: {
@@ -292,7 +296,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     standardDeduction: 2_300,
     brackets: [
       [0,      10_000,  0.000],
-      [10_000, Infinity, 0.047],
+      [10_000, TOP, 0.047],
     ],
     notes: 'No tax on first $10 K; 4.7% flat above',
   },
@@ -307,7 +311,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [4_828, 6_035,  0.035],
       [6_035, 7_242,  0.040],
       [7_242, 8_449,  0.045],
-      [8_449, Infinity, 0.047],
+      [8_449, TOP, 0.047],
     ],
     notes: 'Top rate 4.7% (2026 after reductions)',
   },
@@ -316,7 +320,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     standardDeduction: 5_840,
     brackets: [
       [0,      20_500,  0.047],
-      [20_500, Infinity, 0.059],
+      [20_500, TOP, 0.059],
     ],
   },
   NE: {
@@ -326,7 +330,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,      3_700,   0.0246],
       [3_700,  22_170,  0.0351],
       [22_170, 35_730,  0.0501],
-      [35_730, Infinity, 0.052],
+      [35_730, TOP, 0.052],
     ],
     notes: 'Top rate reduced to 5.2% (2026)',
   },
@@ -352,7 +356,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [40_000,  75_000,  0.05525],
       [75_000,  500_000, 0.0637],
       [500_000, 1_000_000, 0.0897],
-      [1_000_000, Infinity, 0.1075],
+      [1_000_000, TOP, 0.1075],
     ],
   },
   NM: {
@@ -363,7 +367,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [5_500,   11_000,  0.032],
       [11_000,  16_000,  0.047],
       [16_000,  210_000, 0.049],
-      [210_000, Infinity, 0.059],
+      [210_000, TOP, 0.059],
     ],
   },
   NY: {
@@ -378,14 +382,14 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [161_550,   323_200,   0.0685],
       [323_200,   2_155_350, 0.0965],
       [2_155_350, 25_000_000, 0.103],
-      [25_000_000, Infinity, 0.109],
+      [25_000_000, TOP, 0.109],
     ],
     notes: 'State rate only; NYC/Yonkers surcharges not included',
   },
   NC: {
     name: 'North Carolina',
     standardDeduction: 14_600,
-    brackets: [[0, Infinity, 0.0399]],
+    brackets: [[0, TOP, 0.0399]],
     notes: 'Flat 3.99% (2026)',
   },
   ND: {
@@ -394,7 +398,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,       44_725,  0.000],
       [44_725,  225_950, 0.0195],
-      [225_950, Infinity, 0.025],
+      [225_950, TOP, 0.025],
     ],
     notes: '0% on income up to $44,725',
   },
@@ -405,7 +409,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,       26_050,  0.000],
       [26_050,  46_100,  0.0275],
       [46_100,  100_000, 0.03226],
-      [100_000, Infinity, 0.035],
+      [100_000, TOP, 0.035],
     ],
     notes: '0% on income ≤ $26,050',
   },
@@ -418,7 +422,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [2_500, 3_750,  0.0175],
       [3_750, 4_900,  0.0275],
       [4_900, 7_200,  0.0375],
-      [7_200, Infinity, 0.0475],
+      [7_200, TOP, 0.0475],
     ],
   },
   OR: {
@@ -428,13 +432,13 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,       3_750,   0.0475],
       [3_750,   9_450,   0.0675],
       [9_450,   125_000, 0.0875],
-      [125_000, Infinity, 0.099],
+      [125_000, TOP, 0.099],
     ],
   },
   PA: {
     name: 'Pennsylvania',
     standardDeduction: 0,
-    brackets: [[0, Infinity, 0.0307]],
+    brackets: [[0, TOP, 0.0307]],
     notes: 'Flat 3.07%; local taxes not included',
   },
   RI: {
@@ -443,7 +447,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
     brackets: [
       [0,       77_450,  0.0375],
       [77_450,  176_050, 0.0475],
-      [176_050, Infinity, 0.0599],
+      [176_050, TOP, 0.0599],
     ],
   },
   SC: {
@@ -454,7 +458,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [3_460,  6_520,  0.040],
       [6_520,  9_980,  0.050],
       [9_980,  13_480, 0.060],
-      [13_480, Infinity, 0.063],
+      [13_480, TOP, 0.063],
     ],
     notes: 'Top rate 6.3% (2026, reducing annually toward 6%)',
   },
@@ -479,7 +483,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
   UT: {
     name: 'Utah',
     standardDeduction: 0,
-    brackets: [[0, Infinity, 0.0455]],
+    brackets: [[0, TOP, 0.0455]],
     notes: 'Flat 4.55%; personal exemption credit not modeled',
   },
   VT: {
@@ -489,7 +493,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,       45_400,  0.0335],
       [45_400,  110_050, 0.066],
       [110_050, 229_550, 0.076],
-      [229_550, Infinity, 0.0875],
+      [229_550, TOP, 0.0875],
     ],
   },
   VA: {
@@ -499,7 +503,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,      3_000,  0.020],
       [3_000,  5_000,  0.030],
       [5_000,  17_000, 0.050],
-      [17_000, Infinity, 0.0575],
+      [17_000, TOP, 0.0575],
     ],
   },
   WA: {
@@ -516,7 +520,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [10_000, 25_000,  0.025],
       [25_000, 40_000,  0.030],
       [40_000, 60_000,  0.040],
-      [60_000, Infinity, 0.045],
+      [60_000, TOP, 0.045],
     ],
     notes: 'Reduced rates per 2024 legislation',
   },
@@ -527,7 +531,7 @@ const STATE_TAX: Record<string, StateTaxInfo> = {
       [0,       13_810,  0.0354],
       [13_810,  27_630,  0.044],
       [27_630,  304_170, 0.053],
-      [304_170, Infinity, 0.0765],
+      [304_170, TOP, 0.0765],
     ],
   },
   WY: {
